@@ -28,13 +28,34 @@ class VideoControls extends HookWidget {
 
   double get height => iconSize + _heightProgressControl + padding.vertical;
 
+  double _getOffsetY(
+    bool visible,
+    bool initialVisibility,
+  ) {
+    // No animation on initial visibility
+    if (initialVisibility) {
+      return 0;
+    }
+    return visible ? 0 : height * -1;
+  }
+
+  Offset _getOffset(
+    bool visible,
+    bool initialVisibility,
+  ) {
+    return Offset(
+      0.0,
+      _getOffsetY(
+        visible,
+        initialVisibility,
+      ),
+    );
+  }
+
   @override
   Widget build(
     BuildContext context,
   ) {
-    double _getOffsetY(bool visible) => visible ? 0 : height * -1;
-    Offset _getOffset(bool visible) => Offset(0.0, _getOffsetY(visible));
-
     final cubit = BlocProvider.of<VideoCubit>(context);
     return GestureDetector(
       onTap: cubit.toggleControlsVisibility,
@@ -56,21 +77,17 @@ class VideoControls extends HookWidget {
                       context,
                       cubit: cubit,
                     );
-                    // No animation if visibility not changed yet
-                    if (state.visibilityNotChanged) {
-                      return Positioned(
-                        height: height,
-                        left: 0.0,
-                        right: 0.0,
-                        bottom: _getOffsetY(state.controlsVisible),
-                        child: child,
-                      );
-                    }
                     return TweenAnimationBuilder<Offset>(
                       duration: Duration(milliseconds: 150),
                       tween: Tween<Offset>(
-                        begin: _getOffset(state.controlsNotVisible),
-                        end: _getOffset(state.controlsVisible),
+                        begin: _getOffset(
+                          state.controlsNotVisible,
+                          state.visibilityNotChanged,
+                        ),
+                        end: _getOffset(
+                          state.controlsVisible,
+                          state.visibilityNotChanged,
+                        ),
                       ),
                       builder: (_, value, child) {
                         return Positioned(
