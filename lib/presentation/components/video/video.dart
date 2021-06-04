@@ -11,29 +11,37 @@ class Video extends StatelessWidget {
     this.url, {
     Key? key,
     required this.aspectRatio,
-    required this.controlsEnabled,
+    required this.controlsVisible,
+    required this.autoPlay,
   }) : super(key: key);
 
   static Widget blocProvider(
     String url, {
     required double aspectRatio,
-    bool controlsEnabled = true,
+    bool? controlsVisible,
+    bool autoPlay = true,
   }) {
     return BlocProvider(
       create: (_) {
-        return VideoCubit(url);
+        return VideoCubit(
+          url,
+          autoPlay: autoPlay,
+          controlsVisible: !autoPlay,
+        );
       },
       child: Video._(
         url,
         aspectRatio: aspectRatio,
-        controlsEnabled: controlsEnabled,
+        controlsVisible: controlsVisible ?? !autoPlay,
+        autoPlay: autoPlay,
       ),
     );
   }
 
   final String url;
   final double aspectRatio;
-  final bool controlsEnabled;
+  final bool controlsVisible;
+  final bool autoPlay;
 
   @override
   Widget build(
@@ -64,10 +72,9 @@ class Video extends StatelessWidget {
         VideoPlayer(
           state.controller,
         ),
-        if (controlsEnabled)
-          VideoControls(
-            state.controller,
-          )
+        VideoControls(
+          state.controller,
+        )
       ],
     );
   }

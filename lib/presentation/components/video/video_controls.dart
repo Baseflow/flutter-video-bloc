@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:video_player/video_player.dart';
 
 import 'controls/audio_control.dart';
@@ -8,7 +9,7 @@ import 'controls/progress_indicator_control.dart';
 import 'video_cubit.dart';
 import 'video_state.dart';
 
-class VideoControls extends StatelessWidget {
+class VideoControls extends HookWidget {
   const VideoControls(
     this.controller, {
     Key? key,
@@ -26,6 +27,9 @@ class VideoControls extends StatelessWidget {
   static const _heightProgressControl = 4.0;
 
   double get height => iconSize + _heightProgressControl + padding.vertical;
+
+  double _getOffsetY(bool visible) => visible ? 0 : height * -1;
+  Offset _getOffset(bool visible) => Offset(0.0, _getOffsetY(visible));
 
   @override
   Widget build(
@@ -48,29 +52,36 @@ class VideoControls extends StatelessWidget {
                     return previous.controlsVisible != current.controlsVisible;
                   },
                   builder: (context, state) {
-                    return TweenAnimationBuilder<Offset?>(
+                    final child = _buildBar(
+                      context,
+                      cubit: cubit,
+                    );
+                    // No animation on first build
+                    if (state.firstLoad) {
+                      return Positioned(
+                        height: height,
+                        left: 0.0,
+                        right: 0.0,
+                        bottom: _getOffsetY(state.controlsVisible),
+                        child: child,
+                      );
+                    }
+                    return TweenAnimationBuilder<Offset>(
                       duration: Duration(milliseconds: 150),
                       tween: Tween<Offset>(
-                        begin: state.controlsVisible
-                            ? Offset(0.0, height * -1)
-                            : Offset(0.0, 0.0),
-                        end: state.controlsVisible
-                            ? Offset(0.0, 0.0)
-                            : Offset(0.0, height * -1),
+                        begin: _getOffset(state.controlsNotVisible),
+                        end: _getOffset(state.controlsVisible),
                       ),
                       builder: (_, value, child) {
                         return Positioned(
                           height: height,
                           left: 0.0,
                           right: 0.0,
-                          bottom: value?.dy ?? height * -1,
+                          bottom: value.dy,
                           child: child!,
                         );
                       },
-                      child: _buildBar(
-                        context,
-                        cubit: cubit,
-                      ),
+                      child: child,
                     );
                   },
                 )

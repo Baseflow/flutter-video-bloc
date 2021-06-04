@@ -6,9 +6,11 @@ class VideoCubit extends Cubit<VideoState> {
   VideoCubit(
     String url, {
     bool autoPlay = true,
+    bool controlsVisible = false,
   }) : super(VideoState.initialize(
           url: url,
           autoPlay: autoPlay,
+          controlsVisible: controlsVisible,
         )) {
     state.controller.initialize().then((_) {
       emit(state.copyWith(

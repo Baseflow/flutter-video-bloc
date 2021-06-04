@@ -5,6 +5,7 @@ class VideoState {
     required this.controller,
     required this.loaded,
     required this.controlsVisible,
+    required this.controlsVisiblePrevious,
     required this.playing,
     required this.volume,
     required this.volumeBeforeMute,
@@ -13,6 +14,7 @@ class VideoState {
   factory VideoState.initialize({
     required String url,
     required bool autoPlay,
+    required bool controlsVisible,
   }) {
     final controller = VideoPlayerController.network(
       url,
@@ -20,7 +22,8 @@ class VideoState {
     return VideoState._(
       controller: controller,
       loaded: false,
-      controlsVisible: false,
+      controlsVisible: controlsVisible,
+      controlsVisiblePrevious: controlsVisible,
       playing: autoPlay,
       volume: controller.value.volume,
       volumeBeforeMute: controller.value.volume,
@@ -30,10 +33,12 @@ class VideoState {
   final VideoPlayerController controller;
   final bool loaded;
   final bool controlsVisible;
+  final bool controlsVisiblePrevious;
   final bool playing;
   final double volume;
   final double volumeBeforeMute;
 
+  bool get firstLoad => controlsVisible == controlsVisiblePrevious;
   bool get notLoaded => !loaded;
   bool get notPlaying => !playing;
   bool get controlsNotVisible => !controlsVisible;
@@ -48,10 +53,15 @@ class VideoState {
     double? volume,
     double? volumeBeforeMute,
   }) {
+    var controlsVisiblePrevious = this.controlsVisiblePrevious;
+    if (controlsVisible != null) {
+      controlsVisiblePrevious = !controlsVisible;
+    }
     return VideoState._(
       controller: controller ?? this.controller,
       loaded: loaded ?? this.loaded,
       controlsVisible: controlsVisible ?? this.controlsVisible,
+      controlsVisiblePrevious: controlsVisiblePrevious,
       playing: playing ?? this.playing,
       volume: volume ?? this.volume,
       volumeBeforeMute: volumeBeforeMute ?? this.volumeBeforeMute,
