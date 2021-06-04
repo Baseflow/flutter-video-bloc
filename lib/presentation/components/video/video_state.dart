@@ -38,8 +38,9 @@ class VideoState {
   final double volume;
   final double volumeBeforeMute;
 
-  bool get firstLoad => controlsVisible == controlsVisiblePrevious;
   bool get notLoaded => !loaded;
+  bool get visibilityChanged => controlsVisible != controlsVisiblePrevious;
+  bool get visibilityNotChanged => !visibilityChanged;
   bool get notPlaying => !playing;
   bool get controlsNotVisible => !controlsVisible;
   bool get mute => volume <= 0;

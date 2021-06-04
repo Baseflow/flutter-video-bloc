@@ -56,8 +56,8 @@ class VideoControls extends HookWidget {
                       context,
                       cubit: cubit,
                     );
-                    // No animation on first build
-                    if (state.firstLoad) {
+                    // No animation if visibility not changed yet
+                    if (state.visibilityNotChanged) {
                       return Positioned(
                         height: height,
                         left: 0.0,
