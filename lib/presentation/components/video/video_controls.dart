@@ -28,13 +28,13 @@ class VideoControls extends HookWidget {
 
   double get height => iconSize + _heightProgressControl + padding.vertical;
 
-  double _getOffsetY(bool visible) => visible ? 0 : height * -1;
-  Offset _getOffset(bool visible) => Offset(0.0, _getOffsetY(visible));
-
   @override
   Widget build(
     BuildContext context,
   ) {
+    double _getOffsetY(bool visible) => visible ? 0 : height * -1;
+    Offset _getOffset(bool visible) => Offset(0.0, _getOffsetY(visible));
+
     final cubit = BlocProvider.of<VideoCubit>(context);
     return GestureDetector(
       onTap: cubit.toggleControlsVisibility,
