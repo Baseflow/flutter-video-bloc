@@ -41,19 +41,19 @@ class Video extends StatelessWidget {
   Widget build(
     BuildContext context,
   ) {
-    return AnimatedSwitcher(
-      duration: Duration(milliseconds: 100),
-      child: BlocBuilder<VideoCubit, VideoState>(
-        builder: (_, state) {
-          return AspectRatio(
+    return BlocBuilder<VideoCubit, VideoState>(
+      builder: (_, state) {
+        return AnimatedSwitcher(
+          duration: Duration(milliseconds: 100),
+          child: AspectRatio(
             key: ValueKey(state.loaded),
             aspectRatio: aspectRatio,
             child: state.notLoaded
                 ? Center(child: CircularProgressIndicator())
                 : _buildVideo(state),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:video_player/video_player.dart';
 
 import 'controls/audio_control.dart';
@@ -9,7 +8,7 @@ import 'controls/progress_indicator_control.dart';
 import 'video_cubit.dart';
 import 'video_state.dart';
 
-class VideoControls extends HookWidget {
+class VideoControls extends StatelessWidget {
   const VideoControls(
     this.controller, {
     Key? key,
@@ -73,11 +72,11 @@ class VideoControls extends HookWidget {
                     return previous.controlsVisible != current.controlsVisible;
                   },
                   builder: (context, state) {
-                    final child = _buildBar(
-                      context,
-                      cubit: cubit,
-                    );
                     return TweenAnimationBuilder<Offset>(
+                      child: _buildBar(
+                        context,
+                        cubit: cubit,
+                      ),
                       duration: Duration(milliseconds: 150),
                       tween: Tween<Offset>(
                         begin: _getOffset(
@@ -98,7 +97,6 @@ class VideoControls extends HookWidget {
                           child: child!,
                         );
                       },
-                      child: child,
                     );
                   },
                 )
